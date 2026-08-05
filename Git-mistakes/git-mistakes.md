@@ -66,6 +66,8 @@ It lets you go back to an earlier state.
 Use `git reflog` whenever you think you've lost your work.
 
 ---
+<img width="1536" height="1024" alt="ChatGPT Image Aug 5, 2026, 04_00_14 PM" src="https://github.com/user-attachments/assets/9e30b573-8b3e-467b-beb0-5384de86dc36" />
+
 
 # 2. I committed, but forgot to include one small change
 
@@ -120,6 +122,8 @@ Only use this if the commit has **not been pushed**.
 Avoid amending commits on shared branches.
 
 ---
+<img width="1536" height="1024" alt="ChatGPT Image Aug 5, 2026, 04_04_33 PM" src="https://github.com/user-attachments/assets/eb9a60a3-10a3-44bb-b6e2-13b6816211ac" />
+
 
 # 3. I need to change the last commit message
 
