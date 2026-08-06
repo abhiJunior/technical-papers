@@ -1,94 +1,62 @@
-# Git Mistakes & How to Fix Them 
+# Git Mistakes & How to Fix Them 🚀
 
-> Git mistakes happen to everyone.
-> This guide shows common Git mistakes, why they happen, and how to fix them in simple language.
-
----
-
-# 1. I did something terribly wrong! Can Git recover it?
-
-## Situation
-
-You accidentally:
-
-- Deleted files
-- Ran the wrong command
-- Reset your branch
-- Broke your repository
-
-You want to go back to a previous working state.
+> **Goal:** Learn Git by making mistakes first, then fixing them.
 
 ---
 
-## Solution
+# Demo Setup
+
+We'll use one Git repository throughout the presentation.
 
 ```bash
-git reflog
-```
+mkdir git-mistakes-demo
+cd git-mistakes-demo
 
-You'll see something like
+git init
 
-```text
-HEAD@{0}
-HEAD@{1}
-HEAD@{2}
-HEAD@{3}
-```
+touch index.html style.css
 
-Find the point where everything was working.
-
-Then run
-
-```bash
-git reset HEAD@{index}
-```
-
-Example
-
-```bash
-git reset HEAD@{2}
-```
-
----
-
-## Why it works
-
-`git reflog` keeps track of where your HEAD has been.
-
-Think of it as Git's **Time Machine**.
-
-It lets you go back to an earlier state.
-
----
-
-## Remember
-
-Use `git reflog` whenever you think you've lost your work.
-
----
-<img width="1536" height="1024" alt="ChatGPT Image Aug 5, 2026, 04_00_14 PM" src="https://github.com/user-attachments/assets/9e30b573-8b3e-467b-beb0-5384de86dc36" />
-
-
-# 2. I committed, but forgot to include one small change
-
-## Situation
-
-You already committed.
-
-```bash
-git commit -m "Added Login Feature"
-```
-
-Then you realize...
-
-"I forgot to include one file."
-
----
-
-## Solution
-
-```bash
 git add .
+git commit -m "Initial commit"
+```
+
+Check the history
+
+```bash
+git log --oneline --graph
+```
+
+---
+
+# 1. Forgot to Add a File to the Last Commit
+
+## Scenario
+
+You changed two files.
+
+```
+index.html
+style.css
+```
+
+But you accidentally committed only one.
+
+```bash
+git add index.html
+
+git commit -m "Added Homepage"
+```
+
+Later you realize
+
+> "Oops! I forgot style.css."
+
+---
+
+## Solution
+
+```bash
+git add style.css
 
 git commit --amend --no-edit
 ```
@@ -97,17 +65,15 @@ git commit --amend --no-edit
 
 ## Why it works
 
-Instead of creating a new commit,
-
-Git updates your **last commit**.
-
-Before
+Instead of creating
 
 ```
 Commit A
+
+Commit B
 ```
 
-After
+Git updates
 
 ```
 Commit A (Updated)
@@ -115,30 +81,28 @@ Commit A (Updated)
 
 ---
 
-## Warning
+## Remember
 
-Only use this if the commit has **not been pushed**.
+✅ Local commits only
 
-Avoid amending commits on shared branches.
+❌ Don't amend commits after pushing
 
 ---
-<img width="1536" height="1024" alt="ChatGPT Image Aug 5, 2026, 04_04_33 PM" src="https://github.com/user-attachments/assets/eb9a60a3-10a3-44bb-b6e2-13b6816211ac" />
 
+# 2. Wrong Commit Message
 
-# 3. I need to change the last commit message
+## Scenario
 
-## Situation
-
-You wrote
-
-```text
-Fixed stuff
+```bash
+git commit -m "asdf"
 ```
 
-But you wanted
+Oops...
 
-```text
-Fix login validation bug
+Wanted
+
+```
+Added About Page
 ```
 
 ---
@@ -148,8 +112,6 @@ Fix login validation bug
 ```bash
 git commit --amend
 ```
-
-Git opens the editor.
 
 Update the message.
 
@@ -163,49 +125,97 @@ Done.
 
 Only the commit message changes.
 
-Your code stays exactly the same.
+The code stays exactly the same.
 
 ---
 
-# 4. I committed to main, but it should have been a new branch
+# 3. Accidentally Committed to the Wrong Branch
 
-## Situation
+## Scenario
 
-Current history
+You're on
 
 ```
 main
-
-Commit A
-Commit B
 ```
 
-Commit B should belong to
+You commit
 
 ```
-feature/login
+Navbar Styling
+```
+
+But it belongs to
+
+```
+feature/navbar
 ```
 
 ---
 
 ## Solution
 
-Create a new branch
-
 ```bash
-git branch feature/login
+git reset --soft HEAD~1
+
+git stash
+
+git checkout -b feature/navbar
+
+git stash pop
+
+git add .
+
+git commit -m "Navbar Styling"
 ```
 
-Remove the last commit from main
+---
+
+## Why it works
+
+- Removes the commit
+- Keeps your code
+- Moves the changes to the correct branch
+
+---
+
+## Alternative
 
 ```bash
-git reset HEAD~ --hard
+git cherry-pick
 ```
 
-Move to the new branch
+---
+
+# 4. Committed to Main Instead of Creating a Feature Branch
+
+## Scenario
+
+History
+
+```
+main
+
+A
+B
+```
+
+Commit B should be on
+
+```
+feature/footer
+```
+
+---
+
+## Solution
 
 ```bash
-git checkout feature/login
+git branch feature/footer
+
+git reset --hard HEAD~1
+
+git checkout feature/footer
 ```
 
 ---
@@ -228,7 +238,7 @@ main
 
 A
 
-feature/login
+feature/footer
 
 A
 B
@@ -238,107 +248,29 @@ B
 
 ## Why it works
 
-The branch is created before removing the commit.
+The new branch keeps the commit.
 
-The new branch still contains the commit.
-
----
-
-# 5. I accidentally committed to the wrong branch
-
-## Situation
-
-You committed on
-
-```
-main
-```
-
-Instead of
-
-```
-feature/payment
-```
+Main no longer has it.
 
 ---
 
-## Solution
+# 5. git diff Shows Nothing
 
-Undo the commit but keep the changes
-
-```bash
-git reset HEAD~ --soft
-```
-
-Save the changes temporarily
+## Scenario
 
 ```bash
-git stash
-```
-
-Switch branch
-
-```bash
-git checkout feature/payment
-```
-
-Restore the changes
-
-```bash
-git stash pop
-```
-
-Commit again
-
-```bash
-git add .
-
-git commit -m "Payment Feature"
-```
-
----
-
-## Why it works
-
-- Soft reset removes only the commit.
-- Stash temporarily stores your work.
-- After switching branches, you restore and commit it.
-
----
-
-## Another way
-
-You can also use
-
-```bash
-git cherry-pick
-```
-
-to copy a commit from one branch to another.
-
----
-
-# 6. I ran git diff but nothing appeared
-
-## Situation
-
-```bash
-git add .
+git add style.css
 
 git diff
 ```
 
-Output
-
-```
-Nothing
-```
+Nothing appears.
 
 ---
 
 ## Why?
 
-Because your changes are already in the staging area.
+Because the file is already staged.
 
 ---
 
@@ -355,138 +287,132 @@ git diff --staged
 ```
 Working Directory
         ↓
- Staging Area
+Staging Area
         ↓
-      Commit
-```
-
-`git diff`
-
-Shows
-
-```
-Working Directory
-
-↓
-
-Staging Area
-```
-
-`git diff --staged`
-
-Shows
-
-```
-Staging Area
-
-↓
-
-Last Commit
+Commit
 ```
 
 ---
 
-# 7. I need to undo an old commit
+# 6. Undo an Old Commit
 
-## Situation
+## Scenario
 
-You made a mistake five commits ago.
-
-You want to remove only that commit.
-
----
-
-## Solution
-
-View commit history
-
-```bash
-git log
-```
-
-Copy the commit hash.
-
-Run
-
-```bash
-git revert <commit-hash>
-```
-
-Example
-
-```bash
-git revert 3f6a9b2
-```
-
----
-
-## Why it works
-
-Git creates a **new commit**
-
-that reverses the changes.
-
-History remains safe.
-
----
-
-## Example
-
-Before
+History
 
 ```
 A
 B
 C (Bug)
 D
-E
 ```
 
-After
+Need to remove
+
+```
+C
+```
+
+without deleting D.
+
+---
+
+## Solution
+
+```bash
+git log
+
+git revert <hash>
+```
+
+---
+
+## Result
 
 ```
 A
 B
 C
 D
-E
-F (Undo C)
+E (Undo C)
 ```
 
 ---
 
-# 8. I want to restore one file
+## Why it works
 
-## Situation
+Git creates a new commit that reverses the old one.
 
-You accidentally edited
+No history is deleted.
 
+---
+
+# 7. Git Time Machine (git reflog)
+
+## Scenario
+
+You accidentally destroy history.
+
+```bash
+git reset --hard HEAD~2
 ```
-config.js
-```
 
-Now it is broken.
+Now two commits disappear.
+
+Everyone panics.
 
 ---
 
 ## Solution
 
-Find an older commit
+```bash
+git reflog
+```
+
+Find
+
+```
+HEAD@{1}
+```
+
+Recover
+
+```bash
+git reset --hard HEAD@{1}
+```
+
+---
+
+## Why it works
+
+Git remembers where HEAD has been.
+
+Think of reflog as Git's **Time Machine**.
+
+---
+
+# 8. Restore One File
+
+## Scenario
+
+Only one file is broken.
+
+```
+style.css
+```
+
+Everything else is correct.
+
+---
+
+## Solution
 
 ```bash
 git log
-```
 
-Restore the file
+git checkout <hash> -- style.css
 
-```bash
-git checkout <commit-hash> -- config.js
-```
-
-Commit the restored file
-
-```bash
-git commit -m "Restore config.js"
+git commit -m "Restore style.css"
 ```
 
 ---
@@ -495,89 +421,71 @@ git commit -m "Restore config.js"
 
 Only that file is restored.
 
-Everything else remains unchanged.
+Everything else stays unchanged.
 
 ---
 
-# 9. My repository is completely broken
-
-## Situation
-
-Nothing is working.
-
-- Merge conflicts
-- Wrong commits
-- Untracked files
-- Broken branch
-
----
-
-## Solution
-
-Download the latest changes
-
-```bash
-git fetch origin
-```
-
-Switch to main
-
-```bash
-git checkout main
-```
-
-Reset to the remote version
-
-```bash
-git reset --hard origin/main
-```
-
-Remove untracked files
-
-```bash
-git clean -fd
-```
 
 ---
 
 ## Warning
 
-This permanently deletes
+This permanently removes
 
 - Local commits
 - Local changes
 - Untracked files
 
-Only use this if you are sure.
-
 ---
 
-# Summary
+# Quick Cheat Sheet
 
 | Mistake | Command |
 |----------|---------|
-| Recover lost work | `git reflog` |
-| Forgot to add files | `git commit --amend --no-edit` |
-| Wrong commit message | `git commit --amend` |
-| Commit should be on new branch | `git branch` + `git reset` |
-| Committed on wrong branch | `git stash` + `git checkout` |
-| git diff shows nothing | `git diff --staged` |
+| Forgot a file | `git commit --amend --no-edit` |
+| Wrong message | `git commit --amend` |
+| Wrong branch | `git reset --soft` + `git stash` |
+| Should be feature branch | `git branch` + `git reset --hard` |
+| git diff empty | `git diff --staged` |
 | Undo old commit | `git revert` |
+| Recover deleted commits | `git reflog` |
 | Restore one file | `git checkout HASH -- file` |
-| Reset repository | `git reset --hard` |
+| Reset everything | `git reset --hard origin/main` |
 
 ---
 
-# Presentation Tip 🎤
+# Demo Flow
 
-For every topic, follow this flow:
+For every topic follow this order:
 
-1. Create the mistake.
-2. Ask the audience what they would do.
-3. Show the problem.
-4. Explain why it happened.
-5. Run the Git command.
-6. Verify using `git status` or `git log`.
-7. Share one important takeaway.
+1. 🎯 Explain the scenario
+2. ❌ Make the mistake live
+3. 🤔 Ask the audience what happened
+4. 📋 Show `git status`
+5. 📜 Show `git log --oneline --graph`
+6. ✅ Apply the fix
+7. ✔ Verify that it worked
+8. 💡 Explain why the command works
 
-This makes Git much easier to understand than simply memorizing commands.
+```
+
+---
+
+## One important change I'd make
+
+I'd move **`git reflog` from the beginning to near the end** (as shown above).
+
+Why? Because `reflog` is most impressive when you've already shown commands like `reset`, `amend`, and `revert`. Then you can intentionally "lose" commits with:
+
+```bash
+git reset --hard HEAD~2
+```
+
+Everyone thinks the work is gone, and then you recover it with:
+
+```bash
+git reflog
+git reset --hard HEAD@{1}
+```
+
+That creates a memorable "wow" moment and clearly demonstrates why `git reflog` is often called Git's **time machine**. It's a much stronger finale than opening the presentation with it.
