@@ -27,6 +27,8 @@ git log --oneline --graph
 ```
 
 ---
+<img width="1536" height="1024" alt="ChatGPT Image Aug 6, 2026, 12_41_10 PM" src="https://github.com/user-attachments/assets/fbac0910-e7b8-4ede-b18b-deaf79581cdc" />
+
 
 # 1. Forgot to Add a File to the Last Commit
 
