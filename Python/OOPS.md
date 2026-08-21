@@ -652,4 +652,3 @@ A: Encapsulation hides *data* by restricting access; abstraction hides *implemen
 A: MRO (Method Resolution Order) is the order Python follows to search for a method across multiple parent classes, left to right.
 
 ---
-*End of notes — good for quick revision before interviews or exams.*
