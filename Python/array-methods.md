@@ -312,5 +312,4 @@ print(len(lst))
 | min() | Get the smallest item (built-in function) | Item value | No |
 | sum() | Get the total of all items (built-in function) | Number | No |
 
----
-*End of notes — good for quick revision before interviews or exams.*
+
